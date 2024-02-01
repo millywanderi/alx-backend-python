@@ -63,3 +63,23 @@ class TestGithubOrgClient(unittest.TestCase):
         """unittest for GithubOrgClient.has_licence"""
         result = GithubOrgClient.has_licence(repo, licence_key)
         self.assertEqual(result, expected)
+
+
+@parameterized_class(
+    ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
+    TEST_PAYLOAD
+)
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """Class for Integration test of fixtures"""
+
+    @classmethod
+    def setUpClass(cls):
+        """A class method called before tests in an individual calss are run"""
+        config = {'return_value.json.side_effect':
+                  [
+                      cls.org_payload, cls.repos_payload,
+                      cls.org_payload, cls.repos_payload
+                  ]
+                  }
+        cls.get_patcher = patch('requests.get', **config)
+        cls.mock = cls.get_patcher.start()
