@@ -83,3 +83,29 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
                   }
         cls.get_patcher = patch('requests.get', **config)
         cls.mock = cls.get_patcher.start()
+
+    def test_public_repos(self):
+        """Integration test: public repos"""
+        test_class = GithubOrgClient("google")
+
+        self.assertEqual(test_class.org, self.org_payload)
+        self.assertEqual(test_class.repos_payload, self.repos_payload)
+        self.assertEqual(test_class.public_repos(), self.expected_repos)
+        self.assertEqual(test_class.public_repos("XLICENCE"), [])
+        self.mock.assert_called()
+
+    def test_public_repos_with_license(self):
+        """Integration test for public repos with License"""
+        test_class = GithubOrgClient("google")
+
+        self.assertEqual(test_class.public_repos(), self.expected_repos)
+        self.assertEqual(test_class.public_repos("XLICENCE"), [])
+        self.assertEqual(test_class.public_repos(
+            "apache-2.0"), self.apache2_repos)
+        self.mock.assert_called()
+
+        @classmethod
+        def tearDownClass(cls):
+            """A class method called after tests in individual class have run
+            """
+            cls.get_patcher.stop()
