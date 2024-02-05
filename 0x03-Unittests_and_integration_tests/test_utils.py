@@ -3,7 +3,7 @@
 A module that parameterize a unit test
 """
 import unittest
-from parameterized import parameterized
+from parameterized import parameterized, parameterized_class
 from unittest.mock import Mock, patch
 from typing import Dict, Tuple, Union
 
@@ -38,10 +38,10 @@ class TestAccessNestedMap(unittest.TestCase):
             self,
             nested_map: Dict,
             path: Tuple[str],
-            exception: Exception,
+            expected: Exception,
             ) -> None:
         """Tests `test_access_nested_map` exception raising"""
-        with self.assertRaises(exception):
+        with self.assertRaises(expected):
             access_nested_map(nested_map, path)
 
 
@@ -49,7 +49,7 @@ class TestGetJson(unittest.TestCase):
     """class that test that utils.get_json"""
     @parameterized.expand([
         ("http://example.com", {"payload": True}),
-        ("http://holberton.io", test_payload={"payload": False}),
+        ("http://holberton.io", {"payload": False}),
     ])
     def test_get_json(
             self,
